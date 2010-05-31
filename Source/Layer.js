@@ -2,15 +2,11 @@
 ---
 script: Layer.js
 description: Layer, holds items.
-
 license: MIT-style
-
 authors:
-- Martin Tillmann
-
+ - Martin Tillmann
 requires:
-- core/1.2.4: '*'
- 
+  core/1.2.4: '*'
 provides: [Layer]
 
 */
