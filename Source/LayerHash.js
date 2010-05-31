@@ -8,7 +8,7 @@ authors:
 requires:
   core/1.2.4: '*'
 provides: [LayerHash]
-
+...
 */
 
 var LayerHash = new Class({
