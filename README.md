@@ -11,6 +11,7 @@ How to use
 
 Initialize the CANVAS-object, then start adding layers, items and threads:
 
+	#JS
 	CANVAS.init({ canvasElement : 'DOMCanvasElement' });
 	CANVAS.layers.add( new Layer({ id : 'myLayer' });
 	CANVAS.layers.get('myLayer').add( new CanvasItem({
