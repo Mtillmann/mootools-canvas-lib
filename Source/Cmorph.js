@@ -1,5 +1,6 @@
 /*
 ---
+script: Cmorph.js
 description: Cmorph, generic Morph object.
 
 license: MIT-style

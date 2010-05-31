@@ -1,5 +1,6 @@
 /*
 ---
+script: CANVAS.js
 description: CANVAS, static object.
 
 license: MIT-style

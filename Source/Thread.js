@@ -1,5 +1,6 @@
 /*
 ---
+script: Thread.js
 description: Thread, timer object.
 
 license: MIT-style

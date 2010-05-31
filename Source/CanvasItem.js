@@ -1,5 +1,6 @@
 /*
 ---
+script: CanvasItem.js
 description: CanvasItem, item that is drawn.
 
 license: MIT-style

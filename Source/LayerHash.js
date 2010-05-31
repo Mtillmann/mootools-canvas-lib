@@ -1,5 +1,6 @@
 /*
 ---
+script: LayerHash.js
 description: LayerHash, manages layers.
 
 license: MIT-style

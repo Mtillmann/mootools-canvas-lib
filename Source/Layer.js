@@ -1,5 +1,6 @@
 /*
 ---
+script: Layer.js
 description: Layer, holds items.
 
 license: MIT-style
