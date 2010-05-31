@@ -7,12 +7,9 @@ authors:
  - Martin Tillmann
 requires:
   core/1.2.4: '*'
-provides: [Dummy]
+provides: [CANVAS]
 ...
 */
-
-var Dummy = new Class({ initialize : $empty});
-
 (function(){
 	var CANVAS = this.CANVAS = {
 		
