@@ -1,12 +1,12 @@
 /*
 ---
+name: Cmorph
 script: Cmorph.js
 description: Cmorph, generic Morph object.
 license: MIT-style
 authors:
  - Martin Tillmann
-requires:
-  core/1.2.4: '*'
+requires: [Core/Class, Core/Fx]
 provides: [Cmorph]
 ...
 */

@@ -1,12 +1,12 @@
 /*
 ---
+name: Thread
 script: Thread.js
 description: Thread, timer object.
 license: MIT-style
 authors:
  - Martin Tillmann
-requires:
-  core/1.2.4: '*'
+requires: [Core/Class, Core/Event]
 provides: [Thread]
 ...
 */

@@ -1,12 +1,12 @@
 /*
 ---
+name: Layer
 script: Layer.js
 description: Layer, holds items.
 license: MIT-style
 authors:
  - Martin Tillmann
-requires:
-  core/1.2.4: '*'
+requires: [Core/Class, Core/Event, Core/Hash, CanvasItem]
 provides: [Layer]
 ...
 */

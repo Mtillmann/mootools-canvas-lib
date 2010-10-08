@@ -1,12 +1,12 @@
 /*
 ---
+name: CANVAS
 script: CANVAS.js
 description: CANVAS, static object.
 license: MIT-style
 authors:
  - Martin Tillmann
-requires:
-  core/1.2.4: '*'
+requires: [Core/Hash, Element/Element.Dimensions]
 provides: [CANVAS]
 ...
 */

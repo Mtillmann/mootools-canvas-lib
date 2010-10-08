@@ -1,12 +1,12 @@
 /*
 ---
+name: CanvasItem
 script: CanvasItem.js
 description: CanvasItem, item that is drawn.
 license: MIT-style
 authors:
  - Martin Tillmann
-requires:
-  core/1.2.4: '*'
+requires: [Core/Class, Core/Event, CANVAS]
 provides: [CanvasItem]
 ...
 */
