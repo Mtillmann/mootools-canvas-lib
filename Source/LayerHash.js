@@ -28,7 +28,9 @@ var LayerHash = new Class({
 		pos: [],
 		id: {}
 	},
+	
 	length: 0,
+	
 	layers: [],
 	
 	initialize: function(options){
@@ -62,7 +64,7 @@ var LayerHash = new Class({
 	rebuildTables: function(){
 		this.tables = {pos: [], id: {}};
 		for (var i = 0, lyr; lyr = this.layers[i]; i++){
-			id = lyr.options.id;
+			var id = lyr.options.id;
 			this.tables.pos.push(id);
 			this.tables.id[id] = i;
 		}
@@ -145,7 +147,7 @@ var LayerHash = new Class({
 	
 	draw: function(id){
 		if (!id){
-			for (var i = 0, layer; layer = this.layers[ i ]; i++){
+			for (var i = 0, layer; layer = this.layers[i]; i++){
 				this.drawLayer(layer);
 			}
 		} else {

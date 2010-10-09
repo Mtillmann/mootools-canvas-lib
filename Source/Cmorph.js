@@ -14,7 +14,9 @@ provides: [Cmorph]
 var Cmorph = new Class({
 	
 	Extends: Fx,
+	
 	item: null,
+	
 	properties: null,
 	
 	initialize: function(xitem, options){
@@ -33,7 +35,7 @@ var Cmorph = new Class({
 			this.properties[prop] = [v[0], v[1], v[1] - v[0]];
 		}
 		
-		this.start(0,1);
+		this.start(0, 1);
 		return this;
 	},
 	

@@ -30,13 +30,12 @@ var Thread = new Class({
 	morphs: [],
 	
 	initialize: function(options){
-	
 		if (!options.id){
 			throw new Error('Thread.initialize: options.id must not be blank!');
 		}		
 		if (options.fps)options.fps = (1000 / options.fps).round();
 		this.setOptions(options);
-		if (this.options.instant)this.start();
+		if (this.options.instant) this.start();
 		return this;
 	},
 	

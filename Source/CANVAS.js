@@ -91,7 +91,7 @@ provides: [CANVAS]
 					var p = CANVAS.getMouse(e);
 					if (CANVAS.dragTarget){
 						CANVAS.fromPath(CANVAS.dragTarget).fireEvent('mousemove', p);
-						return
+						return;
 					}
 					if (item = CANVAS.findTarget(p)){
 						if (item.fullid != CANVAS.lastMouseOverTarget){
