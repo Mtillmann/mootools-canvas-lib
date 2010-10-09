@@ -12,36 +12,39 @@ provides: [LayerHash]
 */
 
 var LayerHash = new Class({
-	Implements : [Events,Options],
-	options : {
-		onAdd : $empty,
-		onRemove : $empty,
-		onSwap : $empty,
-		onPromote : $empty,
-		onDemote : $empty,
-		onDraw : $empty
+	
+	Implements: [Events, Options],
+	
+	options: {
+		onAdd: $empty,
+		onRemove: $empty,
+		onSwap: $empty,
+		onPromote: $empty,
+		onDemote: $empty,
+		onDraw: $empty
 	},
-	tables : {
-		pos : [],
-		id : {}
+	
+	tables: {
+		pos: [],
+		id: {}
 	},
-	length : 0,
-	layers : [],
-	initialize : function(options){
+	length: 0,
+	layers: [],
+	
+	initialize: function(options){
 		this.setOptions(options);
 		return this;
 	},
-	add : function(layer)
-	{
+	
+	add: function(layer){
 		var at = this.layers.length;
 		return this.addAt(layer, at);
 	},
-	addAt : function(layer, pos)
-	{
-		layer = layer.options?layer:new Layer(layer);
-		if($type(this.tables.id[layer.options.id]) == 'number')
-		{
-			throw new Error('LayerHash.addAt: Layer-ID can only be used once: ``'+layer.options.id+'´´');
+	
+	addAt: function(layer, pos){
+		layer = layer.options ? layer : new Layer(layer);
+		if ($type(this.tables.id[layer.options.id]) == 'number'){
+			throw new Error('LayerHash.addAt: Layer-ID can only be used once: ``' + layer.options.id + '´´');
 		}
 		
 		var tmp = this.layers.splice(
@@ -49,76 +52,67 @@ var LayerHash = new Class({
 			this.layers.length - pos,
 			layer
 		);
-	
+		
 		this.layers = this.layers.concat(tmp);
 		this.rebuildTables();
 		this.fireEvent('add');
-		return this.getAt( pos );
+		return this.getAt(pos);
 	},
 	
-	rebuildTables : function()
-	{
-		this.tables = { pos : [], id : {} };
-		for(var i = 0, lyr; lyr = this.layers[i]; i++)
-		{
+	rebuildTables: function(){
+		this.tables = {pos: [], id: {}};
+		for (var i = 0, lyr; lyr = this.layers[i]; i++){
 			id = lyr.options.id;
 			this.tables.pos.push(id);
 			this.tables.id[id] = i;
-		}	
+		}
 		this.length = this.layers.length;
 	},
 	
-	addAfter : function(layer, siblingId)
-	{
-		return this.addAt(layer,this.tables.id[siblingId] + 1);
+	addAfter: function(layer, siblingId){
+		return this.addAt(layer, this.tables.id[siblingId] + 1);
 	},
 	
-	addBefore : function(layer, siblingId)
-	{
-		return this.addAt(layer,this.tables.id[siblingId]);
+	addBefore: function(layer, siblingId){
+		return this.addAt(layer, this.tables.id[siblingId]);
 	},
 	
-	replace : function(layer, replacee)
-	{
+	replace: function(layer, replacee){
 		var pos = this.tables.id[replacee];
 		this.remove(replacee);
 		return this.addAt(layer,pos);
 	},
 	
-	removeAt : function(pos)
-	{
-		this.remove( this.tables.pos[pos] );
+	removeAt: function(pos){
+		this.remove(this.tables.pos[pos]);
 		return this;
 	},
 	
-	remove : function(id)
-	{
-		this.layers.splice( this.tables.id[ id ],1 );
+	remove: function(id){
+		this.layers.splice(this.tables.id[id], 1);
 		this.rebuildTables();
 		this.fireEvent('remove');
 		return this;
 	},
-	promote : function(id)
-	{
-		var from = this.tables.id[ id ];
-		var to = from + 1;
+	
+	promote: function(id){
+		var from = this.tables.id[id],
+			to = from + 1;
 		this.fireEvent('promote');
-		return this.swapByPos(from,to);
-	},	
-	demote : function(id)
-	{
-		var from = this.tables.id[ id ];
-		var to = from - 1;
-		this.fireEvent('demote');
-		return this.swapByPos(from,to);		
+		return this.swapByPos(from, to);
 	},
 	
-	swapByPos : function(from,to)
-	{
-		var fromItem = this.layers[ to ];
-		var toItem = this.layers[ from ];
-		if(fromItem && toItem)
-		{
+	demote: function(id){
+		var from = this.tables.id[id],
+			to = from - 1;
+		this.fireEvent('demote');
+		return this.swapByPos(from, to);		
+	},
+	
+	swapByPos: function(from, to){
+		var fromItem = this.layers[to],
+			toItem = this.layers[from];
+		if (fromItem && toItem){
 			this.layers[from] = fromItem;
 			this.layers[to] = toItem;
 			this.rebuildTables();	
@@ -126,65 +120,59 @@ var LayerHash = new Class({
 		}
 		return false;
 	},
-	swap : function(from, to){
+	
+	swap: function(from, to){
 		this.swapByPos(
-			this.tables.id[ from ],
-			this.tables.id[ to ]
+			this.tables.id[from],
+			this.tables.id[to]
 		);
 		
 		this.fireEvent('swap');
-		return this.get( from );
+		return this.get(from);
 	},
 	
-	getByPos : function( pos )
-	{
-		return this.layers[ pos ];
+	getByPos: function(pos){
+		return this.layers[pos];
 	},
-	getAt : function( pos )
-	{
-		return this.getByPos( pos );
+	
+	getAt: function(pos){
+		return this.getByPos(pos);
 	},
-	get : function( id )
-	{
-		return this.layers[ this.tables.id[ id ] ];
+	
+	get: function(id){
+		return this.layers[this.tables.id[id]];
 	},
-	draw : function( id )
-	{
-		if(!id){
-			for(var i = 0, layer; layer = this.layers[ i ]; i++)
-			{
+	
+	draw: function(id){
+		if (!id){
+			for (var i = 0, layer; layer = this.layers[ i ]; i++){
 				this.drawLayer(layer);
 			}
-		}
-		else
-		{
-			this.drawLayer( id );
+		} else {
+			this.drawLayer(id);
 		}
 		this.fireEvent('draw');
 		return this;
 	},
 	
-	drawLayer : function(layer){
-		if(layer.options.visible)
-		layer.draw();
+	drawLayer: function(layer){
+		if (layer.options.visible) layer.draw();
 	},
 	
-	getOrder : function()
-	{
+	getOrder: function(){
 		return this.tables.pos;
 	},
 	
-	setOrder : function(newOrder)
-	{
+	setOrder: function(newOrder){
 		var tmp = [];
-		for(var i = 0, layerId; layerId = newOrder[i]; i++)
-		{
+		for (var i = 0, layerId; layerId = newOrder[i]; i++){
 			tmp.push(
-				this.layers[ this.tables.id[ layerId ] ]
+				this.layers[this.tables.id[layerId]]
 			);
 		}
 		this.layers = tmp;
 		this.rebuildTables();
 		return this;		
 	}
+	
 });
