@@ -26,7 +26,7 @@ window.addEvent('load', function(){
 	
 	// add a layer to the LayerHash
 	var layer = CANVAS.layers.add(new Layer({
-		id : 'myLayer'
+		id: 'myLayer'
 	}));
 
 	var colors = [
@@ -52,7 +52,7 @@ window.addEvent('load', function(){
 			scale: 1,
 			fillStyle: colors[0],
 			events: {
-				onDraw : function(ctx){
+				onDraw: function(ctx){
 					var w = this.w * this.scale,
 						h = this.h * this.scale,
 						x = this.x - w * .5,
@@ -168,10 +168,10 @@ function animateRed(){
 	locked.red = true;
 	var item = CANVAS.layers.get('myLayer').get('red');
 		
-	new Cmorph(item,{
-		duration : 1000,
-		transition : 'bounce:out',
-		onComplete : function(){
+	new Cmorph(item, {
+		duration: 1000,
+		transition: 'bounce:out',
+		onComplete: function(){
 			locked.red = false;
 		}
 	}).morph({
@@ -187,10 +187,10 @@ function animateGreen(){
 	
 	var item = CANVAS.layers.get('myLayer').get('green');
 		
-	new Cmorph(item,{
-		duration : 1000,
-		transition : 'back:in:out',
-		onComplete : function(){
+	new Cmorph(item, {
+		duration: 1000,
+		transition: 'back:in:out',
+		onComplete: function(){
 			locked.green = false;
 		}
 	}).morph({

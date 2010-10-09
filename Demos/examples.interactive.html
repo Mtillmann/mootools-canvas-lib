@@ -78,7 +78,7 @@ window.addEvent('load', function(){
 				 * like they are passed to (DOM)Element.Events ("event").
 				 * */
 				
-				onDblclick : function(x, y){						
+				onDblclick: function(x, y){						
 					this.fillStyle = '#000';
 					new Cmorph(this, {
 						duration: 1000,
@@ -126,7 +126,7 @@ window.addEvent('load', function(){
 				 * sensitive behavior of the dragging
 				 * */
 				
-				onMousemove : function(x, y){
+				onMousemove: function(x, y){
 					if (this.dragging){
 						this.rotation = this.rotation >= 360 ? 0 : this.rotation + 4;
 						var w = this.w * this.scale,
@@ -141,7 +141,7 @@ window.addEvent('load', function(){
 				 * the local flag..
 				 * */
 				
-				onMouseup : function(){
+				onMouseup: function(){
 					CANVAS.clearDrag();
 					this.dragging = false;
 				},
@@ -153,11 +153,11 @@ window.addEvent('load', function(){
 				 * you could always redraw the whole canvas in these events
 				 * */
 				
-				onMouseover : function(){
+				onMouseover: function(){
 					this.fillStyle = '#999';
 				},
 				
-				onMouseout : function(){
+				onMouseout: function(){
 					this.fillStyle = '#000';
 				}
 				
@@ -168,8 +168,8 @@ window.addEvent('load', function(){
 	//simple thread...
 		
 	CANVAS.addThread(new Thread({
-		id : 'myThread',
-		onExec : function(){
+		id: 'myThread',
+		onExec: function(){
 			CANVAS.clear().draw();
 		}
 	}));
