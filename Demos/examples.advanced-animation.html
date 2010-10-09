@@ -1,0 +1,422 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<title>MooTools Canvas Library - Examples - Advanced Animation</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/reset/reset-min.css" />
+
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/mootools/1.2.4/mootools-yui-compressed.js"></script>
+	<script type="text/javascript" src="../Source/CANVAS.js"></script>
+	<script type="text/javascript" src="../Source/CanvasItem.js"></script>
+	<script type="text/javascript" src="../Source/Cmorph.js"></script>
+	<script type="text/javascript" src="../Source/Layer.js"></script>
+	<script type="text/javascript" src="../Source/LayerHash.js"></script>
+	<script type="text/javascript" src="../Source/Thread.js"></script>
+
+<script type="text/javascript">
+window.addEvent('load', function(){
+
+	CANVAS.init({ canvasElement: 'canvas' });
+	
+	// setting the lineWidth globally
+	
+	CANVAS.ctx.lineWidth = 0.5;
+
+
+	/* you can add a CanvasItem to a new Layer instantly.
+	 * Again, only objects are passed 
+	 * */
+	
+	CANVAS.layers.add({
+		id: 'background'
+	}).add({
+			id: 'content',
+			x: 0,
+			y: 0,
+			w: 600,
+			h: 400,
+			events: {
+				onDraw: function(ctx){
+					ctx.fillStyle = '#aaf';
+					ctx.fillRect(this.x, this.y, this.w, this.h);
+				}
+			}
+	});
+	
+	/* the next item receives no initial properties because they
+	 * will be passed by the onDraw-function of another item (wave0/item)
+	 * */
+	var wave0 = CANVAS.layers.add({id: 'wave0'});
+	CANVAS.layers.add({
+		id: 'wave0bg'
+	}).add({
+		id: 'item',
+		events: {
+			onDraw: function(ctx){
+				ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+				ctx.beginPath();
+				ctx.moveTo(this.xa,this.ya);
+				ctx.quadraticCurveTo(this.cxa, this.cya, this.exa, this.eya);	
+				ctx.lineTo(this.exb, this.eyb);
+				ctx.quadraticCurveTo(this.cxb, this.cyb, this.xb,this.yb);
+				ctx.moveTo(this.xa, this.ya);
+				ctx.fill();
+			}
+		}
+	});
+	
+	var wave1 = CANVAS.layers.add({id: 'wave1'});
+	CANVAS.layers.add({
+		id: 'wave1bg'
+	}).add({
+		id: 'item',
+		events: {
+			onDraw: function(ctx){
+				ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+				ctx.beginPath();
+				ctx.moveTo(this.xa, this.ya);
+				ctx.quadraticCurveTo(this.cxa, this.cya, this.exa, this.eya);	
+				ctx.lineTo(this.exb, this.eyb);
+				ctx.quadraticCurveTo(this.cxb, this.cyb, this.xb,this.yb);
+				ctx.moveTo(this.xa, this.ya);
+				ctx.fill();
+			}
+		}
+	});
+
+	/* this is the on of the wave outline items, the dropshadows
+	 * are removed for performances reasons
+	 * */
+	
+	wave0.add({
+		id: 'item',
+		xa: -10,
+		exa: 610,
+
+		ya: $random(120, 160),
+		eya: $random(120, 160),
+		cxa: $random(0, 600),
+		cya: $random(40, 160),
+		
+		xb: -10,
+		exb: 610,
+		yb: $random(240, 280),
+		eyb: $random(240, 280),
+		cxb: $random(0, 600),
+		cyb: $random(160, 260),		
+		events: {
+			onDraw: function(ctx){
+				ctx.beginPath();
+				ctx.strokeStyle = '#fff';
+				
+				//ctx.shadowOffsetX = 0; 
+				//ctx.shadowBlur = 10;
+				//ctx.shadowColor = "rgba(255, 255, 255, 0.9)";
+								
+				//ctx.shadowOffsetY = 4;
+				ctx.moveTo(this.xa, this.ya);
+				ctx.quadraticCurveTo(this.cxa, this.cya, this.exa, this.eya);
+				ctx.stroke();
+								
+				ctx.beginPath();
+				//ctx.shadowOffsetY = -4;
+				ctx.moveTo(this.xb, this.yb);
+				ctx.quadraticCurveTo(this.cxb, this.cyb, this.exb, this.eyb);
+				ctx.stroke();
+				
+				/* here the outline properties are passed to the wave shape item.
+				 * This will not throw an error (undefined) as the outline is on
+				 * layer lower in the stack so it's onDraw-function is executed
+				 * first and can pass the values before the wave shape is drawn */
+				
+				var props = ['xa', 'exa', 'ya', 'eya', 'cxa', 'cya', 'xb', 'exb', 'yb', 'eyb', 'cxb', 'cyb'];
+				var bg = CANVAS.layers.get('wave0bg').get('item');
+				for (var i = 0, p; p = props[i]; i++){
+					bg[p] = this[p];
+				}
+			}
+		}
+	});
+	
+	/* and another outline item */
+	
+	wave1.add({
+		id: 'item',
+		xa: -10,
+		exa: 610,
+		ya: $random(120, 160),
+		eya: $random(120, 160),
+		cxa: $random(0, 600),
+		cya: $random(40, 160),
+		
+		xb: -10,
+		exb: 610,
+		yb: $random(240, 280),
+		eyb: $random(240, 280),
+		cxb: $random(0, 600),
+		cyb: $random(160, 260),
+		
+		events: {
+			onDraw: function(ctx){
+				ctx.beginPath();
+				ctx.strokeStyle = '#fff';
+				
+				//ctx.shadowOffsetX = 0; 
+				//ctx.shadowBlur = 10;
+				//ctx.shadowColor = "rgba(255, 255, 255, 0.9)";
+								
+				//ctx.shadowOffsetY = 4;
+				ctx.moveTo(this.xa, this.ya);
+				ctx.quadraticCurveTo(this.cxa, this.cya, this.exa, this.eya);
+				ctx.stroke();
+								
+				ctx.beginPath();
+				//ctx.shadowOffsetY = -4;
+				ctx.moveTo(this.xb, this.yb);
+				ctx.quadraticCurveTo(this.cxb, this.cyb, this.exb, this.eyb);
+				ctx.stroke();
+				
+				var props = ['xa', 'exa', 'ya', 'eya', 'cxa', 'cya', 'xb', 'exb', 'yb', 'eyb', 'cxb', 'cyb'];
+				var bg = CANVAS.layers.get('wave1bg').get('item');
+				for (var i = 0, p; p = props[i]; i++){
+					bg[p] = this[p];
+				}
+			}
+		}
+	});
+	
+	/* this item is the object that rotates and changes it's shape.
+	 * The two properties p0 and p1 are the control points of the
+	 * bezier curve and are animated with Cmorph while the scale
+	 * of the item is animated as well and the rotation is updated
+	 * each time the item is drawn.
+	 * */
+	
+	CANVAS.layers.add({
+		id: 'front'
+	}).add({
+			id: 'item',
+			x: 300,
+			y: 200,
+			p0: {x: 100, y: 100},
+			p1: {x: 100, y: -100},
+			
+			scale: 1,
+			rotation: 0,
+			events: {
+				onDraw: function(ctx){
+					this.rotation = this.rotation == 360 ? 0 : ++this.rotation;
+					ctx.fillStyle = 'rgba(0, 0, 255, 0.4)';
+						
+					for (var i = 0; i < 6; i++){
+						ctx.save();
+						ctx.translate(this.x, this.y);
+						ctx.rotate(((360 / 6) * i + this.rotation) * Math.PI / 180);
+
+						ctx.beginPath();
+						ctx.moveTo(
+							(this.p0.x - 100)  * this.scale,
+							(this.p0.y - 100)  * this.scale
+						);
+						
+						ctx.bezierCurveTo(
+							this.p0.x * this.scale,
+							this.p0.y * this.scale,
+							this.p1.x * this.scale,
+							this.p1.y * this.scale,
+							(this.p0.x - 100) * this.scale,
+							(this.p0.y - 100) * this.scale
+						);
+							
+						ctx.fill();				
+						ctx.restore();
+					}
+				}
+			}
+		});
+
+	/* this is the white ghosting rectangle that bounces around in the
+	 * background. It stores it's own previous states and draws them
+	 * with decreasing alpha values. The alpha is 1 for the state at
+	 * the center of array that holds the past states and both directs
+	 * seem to fade away. The animation is completly done in the onDraw
+	 * function as using a Cmorph would give choppy results here because
+	 * the Cmorph and onDraw function are not in sync and the past states
+	 * would not appear to be so smooth.
+	 * */
+
+	CANVAS.layers.addAfter({
+		id: 'bounce'
+	}, 'background').add({
+		
+		id: 'item',
+		x: $random(50, 550),
+		y: $random(50, 350),
+		w: 50,
+		h: 50,
+		states: [],
+		scale: 1,
+		maxstates: 200,
+		rotation: 0,
+		xd: 1,
+		yd: 1,
+		rd: 1,
+		sd: 1,
+		events: {
+			onDraw: function(ctx){
+				var w = this.w * this.scale,
+					h = this.h * this.scale;
+				this.states.push({
+					w: w,
+					h: h,
+					x: this.x - w * .5,
+					y: this.y - h * .5,
+					rot: this.rotation
+				});
+
+				if (this.states.length > this.maxstates) this.states.shift();
+				
+				for (var i = this.states.length - 1, state; state = this.states[i]; i-=4){
+					ctx.save();
+					ctx.translate(state.x, state.y);
+					ctx.rotate(state.rot * Math.PI / 180);
+					var alpha = i > this.maxstates / 2 ? (this.maxstates - i) / (this.maxstates / 2) : i / this.maxstates;
+					ctx.strokeStyle = 'rgba(255, 255, 255, ' + alpha + ')';
+					
+					ctx.strokeRect(state.w * -0.5, state.h * -0.5, state.w, state.h);
+					ctx.restore();
+				}
+				
+				this.x += this.xd;
+				this.y += this.yd;
+				this.rotation += this.rd;
+				this.scale += this.sd * 0.01;
+				if (this.scale <= .5) this.sd = 1;
+				if (this.scale >= 3) this.sd = -1;
+			
+				if (this.xd == 1 && this.x >= 598){
+					this.xd = -1;
+					this.rd = this.rd == 1 ? -1 : 1;
+				}
+				
+				if (this.xd == -1 && this.x <= h){
+					this.xd = 1;
+					this.rd = this.rd == 1 ? -1 : 1;
+				}
+				
+				if (this.yd == 1 && this.y >= 400){
+					this.yd = -1;
+					this.rd = this.rd == 1 ? -1 : 1;
+				}
+				
+				if (this.yd == -1 && this.y <= w){
+					this.yd = 1;
+					this.rd = this.rd == 1 ? -1 : 1;
+				}
+			}
+		}
+	});
+
+	/* several perpetual Cmorph instances which modify
+	 * their targets and durations upon completion and start again
+	 * */
+
+	new Cmorph(CANVAS.layers.get('front').get('item').p0, {
+		duration: 3000,
+		transition: 'elastic:in:out',
+		onComplete: function(){
+			this.options.duration = $random(1000, 5000);
+			this.morph({
+				x: $random(30, 200),
+				y: $random(30, 200)
+			});
+		}
+	}).morph({
+		x: $random(30, 200),
+		y: $random(30, 200)
+	});
+
+	new Cmorph(CANVAS.layers.get('front').get('item'), {
+		duration: 2000,
+		transition: 'back:in:out',
+		onComplete: function(){
+			this.options.duration = $random(1000, 5000);
+			this.morph({
+				scale: this.item.scale > 1 ? $random(0.5, 1) : $random(1, 3)
+			});
+		}
+	}).morph({
+		scale: 1.4
+	});	
+
+	new Cmorph(CANVAS.layers.get('wave1').get('item'), {
+		duration: $random(2000, 4000),
+		transition: 'linear',
+		onComplete: function(){
+			this.morph({
+				ya: $random(120, 160),
+				eya: $random(120, 160),
+				cxa: $random(0, 600),
+				cya: $random(40, 160),
+				yb: $random(240, 280),
+				eyb: $random(240, 280),
+				cxb: $random(0, 600),
+				cyb: $random(160, 260)
+			});
+		}
+	}).morph({
+		ya: $random(120, 160),
+		eya: $random(120, 160),
+		cxa: $random(0, 600),
+		cya: $random(40, 160),
+		yb: $random(240, 280),
+		eyb: $random(240, 280),
+		cxb: $random(0, 600),
+		cyb: $random(160, 260)
+	});
+
+	new Cmorph(CANVAS.layers.get('wave0').get('item'), {
+		duration: $random(4000, 8000),
+		transition: 'linear',
+		onComplete: function(){
+			this.morph({
+				ya: $random(120, 160),
+				eya: $random(120, 160),
+				cxa: $random(0, 600),
+				cya: $random(40, 160),
+				yb: $random(240, 280),
+				eyb: $random(240, 280),
+				cxb: $random(0, 600),
+				cyb: $random(160, 260)
+			});
+		}
+	}).morph({
+		ya: $random(120, 160),
+		eya: $random(120, 160),
+		cxa: $random(0, 600),
+		cya: $random(40, 160),
+		yb: $random(240, 280),
+		eyb: $random(240, 280),
+		cxb: $random(0, 600),
+		cyb: $random(160, 260)
+	});
+	
+	CANVAS.addThread(new Thread({
+		id: 'myThread',
+		onExec: function(){
+			CANVAS.clear().draw();
+		}
+	}));
+	
+});
+
+</script>
+	
+</head>
+<body>
+
+	<canvas id="canvas" width="598" height="398"></canvas>
+
+</body>
+</html>

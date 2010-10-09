@@ -1,0 +1,168 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<title>MooTools Canvas Library - Examples - Keyboard Control</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/reset/reset-min.css" />
+
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/mootools/1.2.4/mootools-yui-compressed.js"></script>
+	<script type="text/javascript" src="../Source/CANVAS.js"></script>
+	<script type="text/javascript" src="../Source/CanvasItem.js"></script>
+	<script type="text/javascript" src="../Source/Cmorph.js"></script>
+	<script type="text/javascript" src="../Source/Layer.js"></script>
+	<script type="text/javascript" src="../Source/LayerHash.js"></script>
+	<script type="text/javascript" src="../Source/Thread.js"></script>
+
+<script type="text/javascript">
+window.addEvent('load', function(){
+
+	//initialize the CANVAS object
+
+	CANVAS.init({
+		canvasElement: 'canvas'
+	});
+	
+	//add a layer to the LayerHash
+	var layer = CANVAS.layers.add(new Layer({
+		id: 'myLayer'
+	}));
+
+	//this item is the black rectangle at the bottom
+	
+	layer.add({
+		id: 'floor',
+		x: 0,
+		y: 380,
+		w: 600,
+		h: 20,
+		fillStyle: '#000',
+		events: {
+			onDraw: function(ctx){
+				ctx.fillStyle = this.fillStyle;
+				ctx.fillRect(this.x, this.y, this.w, this.h );
+			}
+		}
+	});
+
+	//this is the smaller rectangle that moves on top of the first
+	
+	layer.add({
+		id: 'item',
+		x: 285,
+		y: 320,
+		w: 30,
+		h: 60,
+		fillStyle: '#000',
+		events: {
+			onDraw: function(ctx){
+				ctx.fillStyle = this.fillStyle;	
+				ctx.fillRect(this.x, this.y, this.w, this.h);
+			}
+		}
+	});
+
+	/* now I create a thread that handles the keyboard input. */
+	
+	var thread = CANVAS.addThread(new Thread({
+		id: 'myThread',
+		onExec: function(){
+			
+			//get the item from the CANVAS
+			var item = CANVAS.layers.get('myLayer').get('item');
+			
+			/* testing some properties of this thread which control
+			 * wether the item is moved on the canvas.
+			 * 
+			 * The properties used are set by the function that handles
+			 * the keyboard events
+			 * */
+			
+			if (
+				(this.move == -1 && item.x > 0)
+				||
+				(this.move == 1 && item.x < 570)
+			){
+				//when in the air, move twice the distance. No friction:)
+				item.x += this.move * (this.jumping ? 8 : 4);
+			}
+			
+			/* when a jump is triggered and the item isn't currently
+			 * jumping a new Cmorph is created to lift the item in the
+			 * air. When the first Cmorph has finished, a second one
+			 * is created to bring it back to the floor and reset
+			 * the jump-related flags to enable the next jump - no double
+			 * jumping, sorry.
+			 * */
+			
+			
+			if (this.jump && !this.jumping){
+				this.jumping = true;
+				new Cmorph(item, {
+					transition: 'sine:out',
+					onComplete: function(){
+						
+						new Cmorph(this.item, {
+							transition: 'bounce:out',
+							onComplete: function(){
+								thread.jump = false;
+								thread.jumping = false;
+							}
+						}).morph({y: 320, h: 60});
+
+					}
+				}).morph({y: 100, h: 40});
+			}
+			
+			/* of course, after each cycle the thread clears and
+			 * draws the CANVAS.
+			 * */			
+			
+			CANVAS.clear().draw();
+		}
+	}));
+
+	/* here the keyboard events are added to the window. Depending
+	 * on which key is pressed or released the thread's properties
+	 * are updated and then used in the thread's onExec function
+	 * */
+
+	window.addEvents({
+	
+		keydown: function(e){
+			var keys = ['left', 'right', 'space'];
+			var key = e.key;
+			if (keys.indexOf(key) > -1) e.stop();
+			
+			if (key == 'left'){
+				thread.move = -1;
+			} else if (key == 'right'){
+				thread.move = 1;
+			} else if (key == 'space'){
+				if (!thread.jump) 
+					thread.jump = true;
+			}
+		},
+		
+		keyup:function(e){
+			var keys = ['left', 'right', 'space'],
+				key = e.key;
+			
+			if (keys.indexOf(key) > -1) e.stop();
+
+			if (key != 'space') thread.move = null;
+		}
+		
+	});
+	
+});
+
+</script>
+	
+</head>
+<body>
+
+	<canvas id="canvas" width="598" height="398"></canvas>
+
+</body>
+</html>
