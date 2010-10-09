@@ -33,7 +33,7 @@ provides: [CANVAS]
 			
 			this.threads = new Hash();
 			
-			this.ctxPos = document.id(this.ctxEl).getPosition();
+			this.ctxPos = this.ctxEl.getPosition();
 			
 			return this;
 		},
@@ -47,7 +47,7 @@ provides: [CANVAS]
 		},
 
 		getMouse: function(e){
-			var ctxPos = this.cacheCtxPos ? this.ctxPos : document.id(this.ctxEl).getPosition();
+			var ctxPos = this.cacheCtxPos ? this.ctxPos : this.ctxEl.getPosition();
 			return [
 				e.event.pageX - ctxPos.x,
 				e.event.pageY - ctxPos.y
@@ -56,7 +56,7 @@ provides: [CANVAS]
 		
 		setupMouse: function(){
 		
-			document.id(this.ctxEl).addEvents({
+			this.ctxEl.addEvents({
 			
 				click: function(e){
 					var p = CANVAS.getMouse(e);
@@ -136,8 +136,8 @@ provides: [CANVAS]
 		},
 				
 		setCtx: function(el){
-			this.ctxEl = el;
-			this.ctx = document.id(el).getContext('2d');
+			this.ctxEl = document.id(el);
+			this.ctx = this.ctxEl.getContext('2d');
 		},
 		
 		getCtx: function(){
@@ -176,8 +176,8 @@ provides: [CANVAS]
 			rect = rect || [
 					0,
 					0,
-					document.id(this.ctxEl).get('width'),
-					document.id(this.ctxEl).get('height')
+					this.ctxEl.get('width'),
+					this.ctxEl.get('height')
 				];
 			this.ctx.clearRect(rect[0], rect[1], rect[2], rect[3]);
 			return this;
