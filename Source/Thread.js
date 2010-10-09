@@ -69,3 +69,17 @@ var Thread = new Class({
 	}
 	
 });
+
+CANVAS.addThread = function(thread){
+	if (!thread.options) thread = new Thread(thread);
+	this.threads.set(
+		thread.options.id,
+		thread
+	);
+	return thread;
+};
+	
+CANVAS.removeThread = function(id){
+	this.threads.get(id).destroy();
+	this.items.erase(id);
+};

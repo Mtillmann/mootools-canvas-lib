@@ -172,20 +172,6 @@ provides: [CANVAS]
 			return false;
 		},
 		
-		addThread: function(thread){
-			if (!thread.options) thread = new Thread(thread);
-			this.threads.set(
-				thread.options.id,
-				thread
-			);
-			return thread;
-		},
-		
-		removeThread: function(id){
-			this.threads.get(id).destroy();
-			this.items.erase(id);
-		},
-		
 		clear: function(rect){
 			rect = rect || [
 					0,
