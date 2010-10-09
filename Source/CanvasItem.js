@@ -56,7 +56,7 @@ var CanvasItem = new Class({
 	},
 	
 	getLayer: function(){
-		return CAVNAS.layerFromPath(this.fullid);
+		return CANVAS.layerFromPath(this.fullid);
 	},
 	
 	draw: function(ctx){
