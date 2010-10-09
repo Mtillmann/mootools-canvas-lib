@@ -6,7 +6,7 @@ description: CANVAS, static object.
 license: MIT-style
 authors:
  - Martin Tillmann
-requires: [Core/Hash, Element/Element.Dimensions, Thread]
+requires: [Core/Hash, Element/Element.Dimensions, LayerHash]
 provides: [CANVAS]
 ...
 */

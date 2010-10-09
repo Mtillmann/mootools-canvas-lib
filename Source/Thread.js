@@ -33,7 +33,7 @@ var Thread = new Class({
 		if (!options.id){
 			throw new Error('Thread.initialize: options.id must not be blank!');
 		}		
-		if (options.fps)options.fps = (1000 / options.fps).round();
+		if (options.fps) options.fps = (1000 / options.fps).round();
 		this.setOptions(options);
 		if (this.options.instant) this.start();
 		return this;

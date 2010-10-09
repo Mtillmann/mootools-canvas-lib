@@ -6,7 +6,7 @@ description: CanvasItem, item that is drawn.
 license: MIT-style
 authors:
  - Martin Tillmann
-requires: [Core/Class, Core/Event, CANVAS]
+requires: [Core/Class, Core/Event]
 provides: [CanvasItem]
 ...
 */
