@@ -40,8 +40,8 @@ var Layer = new Class({
 	},
 	
 	remove: function(id){
-		this.items.get('id').fireEvent('destroy');
-		this.items.erase('id');
+		this.items.get(id).fireEvent('destroy');
+		this.items.erase(id);
 	},
 	
 	toggle: function(){
