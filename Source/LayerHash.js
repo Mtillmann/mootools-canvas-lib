@@ -82,7 +82,7 @@ var LayerHash = new Class({
 	replace: function(layer, replacee){
 		var pos = this.tables.id[replacee];
 		this.remove(replacee);
-		return this.addAt(layer,pos);
+		return this.addAt(layer, pos);
 	},
 	
 	removeAt: function(pos){
@@ -128,7 +128,6 @@ var LayerHash = new Class({
 			this.tables.id[from],
 			this.tables.id[to]
 		);
-		
 		this.fireEvent('swap');
 		return this.get(from);
 	},

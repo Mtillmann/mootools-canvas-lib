@@ -138,6 +138,7 @@ provides: [CANVAS]
 		setCtx: function(el){
 			this.ctxEl = document.id(el);
 			this.ctx = this.ctxEl.getContext('2d');
+			return this;
 		},
 		
 		getCtx: function(){
