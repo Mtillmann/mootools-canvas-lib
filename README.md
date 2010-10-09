@@ -16,25 +16,24 @@ Initialize the CANVAS-object, then start adding layers, items and threads:
 
 
 	#JS
-	CANVAS.init({ canvasElement : 'DOMCanvasElement' });
-	CANVAS.layers.add( new Layer({ id : 'myLayer' });
-	CANVAS.layers.get('myLayer').add( new CanvasItem({
-		id : 'myItem',
-		x : 100,
-		y : 100,
+	CANVAS.init({canvasElement : 'DOMCanvasElement'});
+	CANVAS.layers.add( new Layer({id : 'myLayer'});
+	CANVAS.layers.get('myLayer').add(new CanvasItem({
+		id: 'myItem',
+		x: 100,
+		y: 100,
 		events : {
 			onDraw : function(ctx){
 				this.x++;
 				this.y++;
 				ctx.fillStyle = '#000';
-				ctx.fillRect(this.x,this.y,50,50);
+				ctx.fillRect(this.x, this.y, 50, 50);
 			}
 		}
 	}));
-	CANVAS.addThread( new Thread({ 
-		id : 'myThread',
-		onExec : function()
-		{
+	CANVAS.addThread(new Thread({ 
+		id: 'myThread',
+		onExec: function(){
 			CANVAS.clear().draw();
 		}
-	}) );
+	}));
