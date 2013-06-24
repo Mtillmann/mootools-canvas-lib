@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<title>MooTools Canvas Library - Examples - Interactivity</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/reset/reset-min.css" />
+
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/mootools/1.2.4/mootools-yui-compressed.js"></script>
+	<script type="text/javascript" src="../Source/CANVAS.js"></script>
+	<script type="text/javascript" src="../Source/CanvasItem.js"></script>
+	<script type="text/javascript" src="../Source/Cmorph.js"></script>
+	<script type="text/javascript" src="../Source/Layer.js"></script>
+	<script type="text/javascript" src="../Source/LayerHash.js"></script>
+	<script type="text/javascript" src="../Source/Thread.js"></script>
+
+<script type="text/javascript">
+window.addEvent('load', function(){
+
+	// initialize the CANVAS object and enable mouse events
+
+	CANVAS.init({ 
+		canvasElement: 'canvas',
+		enableMouse: true
+	});
+	
+	//add a layer
+	var layer = CANVAS.layers.add(new Layer({
+		id: 'myLayer'
+	}));
+
+	//add an item
+	layer.add(new CanvasItem({
+			id: 'item',
+			x: 300,
+			y: 200,
+			w: 50,
+			h: 50,
+			rotation: 0,
+			scale: 1,
+			fillStyle: '#000',
+			interactive: true,
+			offset: [0, 0],
+			events: {
+				onDraw: function(ctx){
+					/* calculate dimensions locally because they
+					 * are have to be translated in order to use
+					 * translate and rotate with the desired effect:
+					 * rotate the item around its visual center
+					 * */
+					
+					var w = this.w * this.scale,
+						h = this.h * this.scale,
+						x = this.x - w * .5,
+						y = this.y - h * .5;
+					
+					//standard Canvas rotation operation
+
+					ctx.save();
+					ctx.translate(this.x, this.y);
+					ctx.rotate(this.rotation * Math.PI / 180);
+
+					ctx.fillStyle = this.fillStyle;
+					ctx.fillRect(w * -0.5, h * -0.5, w, h);
+					ctx.restore();				 
+
+					/* set the dimensions of the item to the local values.
+					 * This is used to determine the whether the mouse is
+					 * over an item or not. Due to the rotation the detection
+					 * is nowhere near accurate but it kind of works
+					 * */
+					
+					this.setDims(x, y, w, h);
+				},
+				
+				/* here the mouse events are set. As you notice the events
+				 * are passed in Mootools Options/Events fashion ("onEvent") not
+				 * like they are passed to (DOM)Element.Events ("event").
+				 * */
+				
+				onDblclick: function(x, y){						
+					this.fillStyle = '#000';
+					new Cmorph(this, {
+						duration: 1000,
+						transition: 'sine:in:out'
+					}).morph({
+						scale: 1,
+						x: 300,
+						y: 200,
+						rotation: 0
+					});
+				},
+				
+				/* here the dragging is set up. CANVAS.setDrag is used
+				 * to tell the CANVAS that this item is currently dragged.
+				 * setDrag will handle the dragging until it is cleared
+				 * with clearDrag even if you suffer from low framerates
+				 * etc. This prevents that items "glitch" away or lose
+				 * focus when you drag them.
+				 * 
+				 * Also a property called offset is set. This is used
+				 * later to calculate the exact position of the item
+				 * in relation to the point where the cursor has
+				 * touched the item. This way you can grab the item
+				 * anywhere and it will stay at the position relative
+				 * to you cursor as you move it.
+				 * 
+				 * Finally, dragging is set to true on the local item
+				 * to have an indication for the mousemove event.
+				 * */
+				
+				onMousedown: function(x, y){
+					CANVAS.setDrag(this);
+					this.offset = [
+						x - this.dims[0],
+						y - this.dims[1]
+					];
+					this.dragging = true;
+				},
+				
+				/* this event handles the updating of the item's position.
+				 * When the item was set to the CANVAS trough setDrag it will
+				 * receive every mousemove event that happens on the <canvas>
+				 * element regardless of whether it actually happens on the
+				 * item or not. This is done to prevent glitches and overly
+				 * sensitive behavior of the dragging
+				 * */
+				
+				onMousemove: function(x, y){
+					if (this.dragging){
+						this.rotation = this.rotation >= 360 ? 0 : this.rotation + 4;
+						var w = this.w * this.scale,
+							h = this.h * this.scale;
+						
+						this.x = x - this.offset[0] + w * .5;
+						this.y = y - this.offset[1] + h * .5; 
+					}
+				},
+				
+				/* just clear the dragging item of the CANVAS and 
+				 * the local flag..
+				 * */
+				
+				onMouseup: function(){
+					CANVAS.clearDrag();
+					this.dragging = false;
+				},
+				
+				/* keep in mind that the changes from mouse-events are not effective
+				 * immediatly but rather at the next cycle of your thread
+				 * or your timer object when you draw the canvas.
+				 * If your framerate is low and you seem to experience input lag
+				 * you could always redraw the whole canvas in these events
+				 * */
+				
+				onMouseover: function(){
+					this.fillStyle = '#999';
+				},
+				
+				onMouseout: function(){
+					this.fillStyle = '#000';
+				}
+				
+			}
+		}
+	));
+	
+	//simple thread...
+		
+	CANVAS.addThread(new Thread({
+		id: 'myThread',
+		onExec: function(){
+			CANVAS.clear().draw();
+		}
+	}));
+	
+});
+
+</script>
+	
+</head>
+<body>
+
+	<canvas id="canvas" width="598" height="398"></canvas>
+
+</body>
+</html>

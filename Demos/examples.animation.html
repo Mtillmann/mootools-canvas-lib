@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<title>MooTools Canvas Library - Examples - Basic Animation</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/reset/reset-min.css" />
+	
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/mootools/1.2.4/mootools-yui-compressed.js"></script>
+	<script type="text/javascript" src="mootools-1.2.4.4-more.js"></script>
+	<script type="text/javascript" src="../Source/CANVAS.js"></script>
+	<script type="text/javascript" src="../Source/CanvasItem.js"></script>
+	<script type="text/javascript" src="../Source/Cmorph.js"></script>
+	<script type="text/javascript" src="../Source/Layer.js"></script>
+	<script type="text/javascript" src="../Source/LayerHash.js"></script>
+	<script type="text/javascript" src="../Source/Thread.js"></script>
+	
+
+<script type="text/javascript">
+window.addEvent('load', function(){
+
+	//initialize the CANVAS object
+	CANVAS.init({
+		canvasElement: 'canvas'
+	});
+	
+	// add a layer to the LayerHash
+	var layer = CANVAS.layers.add(new Layer({
+		id: 'myLayer'
+	}));
+
+	var colors = [
+		'rgba(255, 0, 0, 1)',
+		'rgba(0, 255, 0, 1)',
+		'rgba(0, 0, 255, 1)'
+	];
+	
+	var pos = [
+		{x: 100, y: 375},
+		{x: 300, y: 375},
+		{x: 500, y: 375}
+	];
+	
+	// add three items to the layer.
+	
+	layer.add(new CanvasItem({
+			id: 'red',
+			x: pos[0].x,
+			y: pos[0].y,
+			w: 50,
+			h: 50,
+			scale: 1,
+			fillStyle: colors[0],
+			events: {
+				onDraw: function(ctx){
+					var w = this.w * this.scale,
+						h = this.h * this.scale,
+						x = this.x - w * .5,
+						y = this.y - h * .5;
+					
+					/* recalculate coordinates locally
+					 * to draw the item from its visual center
+					 * instead of x0,y0
+					 * */
+					
+					ctx.fillStyle = this.fillStyle;
+					ctx.fillRect(x, y, w, h);
+				}
+			}
+	}));
+
+	layer.add(new CanvasItem({
+			id: 'green',
+			x: pos[1].x,
+			y: pos[1].y,
+			w: 50,
+			h: 50,
+			rotation: 0,
+			scale: 1,
+			fillStyle: colors[1],
+			events: {
+				onDraw: function(ctx){
+					var w = this.w * this.scale,
+						h = this.h * this.scale,
+						x = this.x - w * .5,
+						y = this.y - h * .5;
+
+					/* this item will rotate according
+					 * to its rotation property. To achieve this
+					 * effect standard canvas operations have
+					 * to be used
+					 * */
+
+					ctx.save();
+					ctx.translate(this.x, this.y);
+					ctx.rotate(this.rotation * Math.PI / 180);
+
+					ctx.fillStyle = this.fillStyle;
+					ctx.fillRect(w * -0.5, h * -0.5, w, h);
+					ctx.restore(); 
+				}
+			}
+	}));
+
+	/* note that you can simply pass an anonymous object to the
+	 * layers add-method. A CanvasItem instance will then be created
+	 * by the layer. Same goes for layers and thread.
+	 * */
+	
+	layer.add( {
+			id: 'blue',
+			x: pos[2].x,
+			y: pos[2].y,
+			w: 50,
+			h: 50,
+			scale: 1,
+			r: 0,
+			g: 0,
+			b: 255,
+			events: {
+				onDraw: function(ctx){
+					var w = this.w * this.scale,
+						h = this.h * this.scale,
+						x = this.x - w * .5,
+						y = this.y - h * .5;
+					
+					/* here the background-color of the item is animated.
+					 * It is composed of the three properties r,g and b which
+					 * can be animated like any other property
+					 * */
+					
+					ctx.fillStyle = 'rgb(' + this.r.round() + ', ' + this.g.round() + ', ' + this.b.round() + ')'; 
+					ctx.fillRect(x, y, w, h);
+				}
+			}
+	});
+
+	
+	
+	//lets add a thread to constantly clears and redraws the Canvas
+	
+	CANVAS.addThread(new Thread({
+		id: 'myThread',
+		onExec: function(){
+			CANVAS.clear().draw();
+		}
+	}));
+
+});
+
+/* object that hold the information whether a certain object
+ * is in animation right now or not. This is used to prevent
+ * multiple Cmorph instances working on the same item
+ * */
+
+var locked = {
+	red: false,
+	green: false,
+	blue: false
+};
+
+/* the next three functions are basically identical except that
+ * the animate different items with differen properties
+ * */
+
+function animateRed(){
+	if (locked.red) return;
+	locked.red = true;
+	var item = CANVAS.layers.get('myLayer').get('red');
+		
+	new Cmorph(item, {
+		duration: 1000,
+		transition: 'bounce:out',
+		onComplete: function(){
+			locked.red = false;
+		}
+	}).morph({
+		y: (item.y == 50 ? 375 : 50),
+		scale: (item.scale == 1?2 : 1)
+	});
+}
+
+
+function animateGreen(){
+	if (locked.green) return;
+	locked.green = true;
+	
+	var item = CANVAS.layers.get('myLayer').get('green');
+		
+	new Cmorph(item, {
+		duration: 1000,
+		transition: 'back:in:out',
+		onComplete: function(){
+			locked.green = false;
+		}
+	}).morph({
+		y: (item.y == 50 ? 375 : 50),
+		rotation: item.rotation + 180,
+		scale: (item.scale == 1 ? 2 : 1)
+	});
+}
+
+
+function animateBlue(){
+	if (locked.blue) return;
+	locked.blue = true;
+	
+	var item = CANVAS.layers.get('myLayer').get('blue');
+		
+	new Cmorph(item, {
+		duration: 1000,
+		transition: 'quad:out',
+		onComplete: function(){
+			locked.blue = false;
+		}
+	}).morph({
+		y: (item.y == 50 ? 375 : 50),
+		r: (item.r == 0 ? 128 : 0),
+		g: (item.r == 0 ? 128 : 0),
+		scale: (item.scale == 1 ? 2 : 1)
+	});
+}
+
+</script>
+
+</head>
+
+<body>
+
+<canvas id="canvas" width="598" height="398"></canvas>
+
+<div id="layerbox">
+	<a href="#" onclick="animateRed(); return false;">red item</a>
+	<a href="#" onclick="animateGreen(); return false;">green item</a>
+	<a href="#" onclick="animateBlue(); return false;">blue item</a>
+	<a href="#" onclick="animateRed();animateGreen();animateBlue(); return false;">all items</a>
+</div>
+
+</body>
+</html>

@@ -1,78 +1,69 @@
 /*
 ---
+name: CanvasItem
 script: CanvasItem.js
 description: CanvasItem, item that is drawn.
 license: MIT-style
 authors:
  - Martin Tillmann
-requires:
-  core/1.2.4: '*'
+requires: [Core/Class, Core/Event]
 provides: [CanvasItem]
 ...
 */
+
 var CanvasItem = new Class({
 	
-	Implements : [Options,Events],
+	Implements: [Options, Events],
 	
-	options : {
-		onDraw : $empty,
-		onDestroy : $empty
+	options: {
+		onDraw: $empty,
+		onDestroy: $empty
 	},
 	
-	dims : null,
+	dims: null,
 	
-	initialize : function(options){
+	initialize: function(options){
 
-		if(!options.id)
-		{
-			throw new Error("CanvasItem.initialize: options.id must not be blank!");
+		if (!options.id){
+			throw new Error('CanvasItem.initialize: options.id must not be blank!');
 		}
 
-		if(options.dims)
-		{
-			throw new Error("CanvasItem.initialize: options.dims must not be used, interactivity and your code may break.");			
+		if (options.dims){
+			throw new Error('CanvasItem.initialize: options.dims must not be used, interactivity and your code may break.');			
 		}
 
-		for(var i in options){
-			if(!['events'].contains(i))this[i] = options[i];
+		for (var i in options){
+			if (!['events'].contains(i)) this[i] = options[i];
 		}
 		
 		this.setOptions(options.events);
 	},
 	
-	setDims : function(){
-		if(arguments.length == 4)
-		{
+	setDims: function(){
+		if (arguments.length == 4){
 			this.dims = arguments;
-		}
-		else if(arguments.length == 1)
-		{
+		} else if (arguments.length == 1){
 			this.dims = arguments[0];
-		}
-		else
-		{
+		} else {
 			//attempt to find the values
-			var x,y,w,h;
-			if(!(x = $pick(this.x,this.left)))return false;
-			if(!(y = $pick(this.y,this.top)))return false;
-			if(!(w = $pick(this.w,this.width)))return false;
-			if(!(h = $pick(this.h,this.height)))return false;
-			this.dims = [x,y,w,h];
+			var x, y, w, h;
+			if (!(x = $pick(this.x, this.left))) return false;
+			if (!(y = $pick(this.y, this.top))) return false;
+			if (!(w = $pick(this.w, this.width))) return false;
+			if (!(h = $pick(this.h, this.height))) return false;
+			this.dims = [x, y, w, h];
 		}
-		
 	},
 	
-	getLayer : function()
-	{
-		return CAVNAS.layerFromPath( this.fullid );
+	getLayer: function(){
+		return CANVAS.layerFromPath(this.fullid);
 	},
 	
-	draw : function(ctx){
-			this.fireEvent('draw',CANVAS.ctx);
+	draw: function(ctx){
+		this.fireEvent('draw', CANVAS.ctx);
 	},
 	
-	destroy : function()
-	{
-			this.fireEvent('destroy',CANVAS.ctx);		
+	destroy: function(){
+		this.fireEvent('destroy', CANVAS.ctx);		
 	}	
 });

@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<title>MooTools Canvas Library - Examples - Basic Setup</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/reset/reset-min.css" />
+
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/mootools/1.2.4/mootools-yui-compressed.js"></script>
+	<script type="text/javascript" src="../Source/CANVAS.js"></script>
+	<script type="text/javascript" src="../Source/CanvasItem.js"></script>
+	<script type="text/javascript" src="../Source/Layer.js"></script>
+	<script type="text/javascript" src="../Source/LayerHash.js"></script>
+
+<script type="text/javascript">
+window.addEvent('load', function(){
+
+	//initialize the CANVAS object
+	CANVAS.init({
+		canvasElement: 'canvas'
+	});
+	
+	//attach a new layer
+	CANVAS.layers.add(new Layer({
+		id: 'myLayer'
+	}));
+	
+	//set globalCompositeOperation on the canvas
+	CANVAS.ctx.globalCompositeOperation = 'lighter';
+
+	//just some arrays
+	var colors = [
+		'rgba(255, 0, 0, 1)',
+		'rgba(0, 255, 0, 1)',
+		'rgba(0, 0, 255, 1)'
+	];
+	
+	var pos = [
+		{x: 150, y: 100},
+		{x: 200, y: 150},
+		{x: 250, y: 50}
+	];
+	
+	//create three items on the layer
+	for (var i = 0; i < colors.length; i++){
+		/* select the layer, then add a new CanvasItem
+		 * with the property from the respective array
+		 * */
+		
+		CANVAS.layers.get('myLayer').add(new CanvasItem({
+			id: 'item-' + i,
+			x: pos[i].x,
+			y: pos[i].y,
+			fillStyle: colors[i],
+			events: {
+				onDraw: function(ctx){
+					/* this is the code that is called
+					 * every time the canvas is drawn.
+					 * */
+					ctx.fillStyle = this.fillStyle;
+					ctx.fillRect(this.x, this.y, 200, 200);
+				}
+			}
+		}));
+	}
+	
+	//finally draw the canvas once
+	CANVAS.draw();
+	
+});
+
+</script>
+	
+</head>
+<body>
+
+	<canvas id="canvas" width="598" height="398"></canvas>
+
+</body>
+</html>

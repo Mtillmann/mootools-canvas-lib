@@ -1,7 +1,33 @@
-name: Mootools Canvas Lib
-author: Martin
-category: Media
-tags: [animation, canvas, interaction]
-docs: http://forvar.de/js/mcl/
-demo: http://forvar.de/js/mcl/examples.html
+name: "Mootools Canvas Lib"
+
 current: 0.1
+
+web: "[github.com/Mtillmann/mootools-canvas-lib](http://github.com/Mtillmann/mootools-canvas-lib)"
+
+description: "Provides functionality to manage and interact with the content of a html5 canvas element."
+
+authors: "[Martin Tillmann](http://forvar.de)"
+
+license: "MIT License"
+
+copyright: "Copyright (c) 2010, Martin Tillmann"
+
+sources:
+  - "Source/CANVAS.js"
+  - "Source/LayerHash.js"
+  - "Source/Layer.js"
+  - "Source/CanvasItem.js"
+  - "Source/Thread.js"
+  - "Source/Cmorph.js"
+
+# Values for MooTools forge
+
+author: Martin
+
+docs: http://forvar.de/js/mcl/
+
+demo: http://forvar.de/js/mcl/examples.html
+
+category: Media
+
+tags: [animation, canvas, interaction]

@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<title>MooTools Canvas Library - Examples - Layer Manipulation</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/reset/reset-min.css" />
+	<style type="text/css">
+	
+		#layerbox li{
+			list-style-type:none !important;
+			margin-left:0px !important;
+			background:#ddd;
+			padding:5px;
+			position:relative;
+			outline:1px solid #ccc;
+			margin-bottom:5px;
+			width : 200px;
+			height:18px;
+		}
+		
+		#layerbox ol{
+			width : 210px;
+		}
+		
+		#layerbox li span{
+			display:block;
+			height:15px;
+			width:15px;
+			position:absolute;
+		}
+		
+		#layerbox li input{
+			position:absolute;
+			left : 25px;
+			top : 6px;
+		}
+
+		#layerbox li span.handle{
+			position:absolute;
+			left : 45px;
+			cursor:move;
+			width:150px;
+			top : 3px;
+		}
+		
+	</style>
+	
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/mootools/1.2.4/mootools-yui-compressed.js"></script>
+	<script type="text/javascript" src="mootools-1.2.4.4-more.js"></script>
+	<script type="text/javascript" src="../Source/CANVAS.js"></script>
+	<script type="text/javascript" src="../Source/CanvasItem.js"></script>
+	<script type="text/javascript" src="../Source/Layer.js"></script>
+	<script type="text/javascript" src="../Source/LayerHash.js"></script>
+	
+
+<script type="text/javascript">
+window.addEvent('load', function(){
+
+	// initialize the CANVAS object
+	 
+	CANVAS.init({
+		canvasElement: 'canvas'
+	});
+	
+	// just some simple arrays containing colors, positions and names for the layers
+	
+	var colors = [
+		'rgba(255, 0, 0, 1)',
+		'rgba(0, 255, 0, 1)',
+		'rgba(0, 0, 255, 1)'
+	];
+	
+	var pos = [
+		{x: 150, y: 100},
+		{x: 200, y: 150},
+		{x: 250, y: 50}
+	];
+	
+	var names = ['red', 'green', 'blue'];
+	
+	//create three layers
+	
+	for (var i = 0, layer; i < colors.length; i++){
+
+		layer = CANVAS.layers.add(new Layer({
+			id : names[i]
+		}));
+		
+		// add one item to each layer with the values from each array
+		
+		layer.add(new CanvasItem({
+			id: 'item',
+			x: pos[i].x,
+			y: pos[i].y,
+			fillStyle: colors[i],
+			events: {
+				onDraw: function(ctx){
+					ctx.fillStyle = this.fillStyle;
+					ctx.fillRect(this.x, this.y, 200, 200);
+				}
+			}
+		}));
+		
+		
+		/* this code is not relevant to the canvas. I just set up the drag'n'drop layer list
+		 * below the <canvas> 
+		 * */
+		
+		var li = new Element('li').store('layer', names[i]).inject($$('#layerbox ol')[0], 'top');
+		
+		new Element('span', {
+				styles: {
+					backgroundColor: colors[i]
+				}
+			}).inject(li);
+		
+		new Element('input', {
+			type: 'checkbox',
+			checked: 'checked',
+			events: {
+				change: function(){
+					/* when the checkbox is clicked the corresponding layer
+					 * is toggled and the canvas is cleared and drawn again 
+					 * */
+					
+					CANVAS.layers.get( this.getParent().retrieve('layer') ).toggle();
+					CANVAS.clear().draw();
+				}
+			}
+		}).inject(li);
+		
+		new Element('span', {
+			'class': 'handle',
+			text: 'layer: ' + names[i]
+		}).inject(li);
+	}
+	
+	// initialize the Sortables
+	
+	new Sortables('#layerbox ol', {
+		revert: {
+			duration: 500,
+			transition: 'elastic:out'
+		},
+		handle: 'span.handle',
+		constrain: true,
+		clone: true,
+		opacity: 0.5,
+		onSort: function(){
+			var tmp = [];
+			$$('#layerbox li').each(function(item){
+				if (item = item.retrieve('layer')) tmp.push(item);
+			}, this);
+			
+			/* when the order is changed the layers are updated by
+			 * calling setOrder. The order that comes from the list
+			 * has to be reversed because the layers are rendered
+			 * top to bottom
+			 * */
+			
+			CANVAS.layers.setOrder(tmp.reverse());
+			CANVAS.clear().draw();
+		}
+	});
+
+	// drawing the canvas one time after everything is set up
+	CANVAS.draw();
+	
+});
+
+
+</script>
+
+</head>
+
+<body>
+
+<canvas id="canvas" width="598" height="398"></canvas>
+
+<div id="layerbox"><ol></ol></div>
+
+</body>
+</html>
